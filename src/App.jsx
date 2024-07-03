@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Input, Space, DatePicker, Button, Checkbox, Empty, Alert } from 'antd';
-import { DeleteOutlined } from '@ant-design/icons';
 import axios from 'axios';
-import './App.css';
+import './App.css'; // 调整导入路径
+import TaskInput from './components/TaskInput';
+import TaskList from './components/TaskList';
+
+
 
 const App = () => {
   const [taskName, setTaskName] = useState('');
@@ -85,38 +87,27 @@ const App = () => {
     }
   };
 
-  const renderTaskItem = (task, index) => {
-    return (
-      <p key={index} className={`task-info task-item ${isTaskDatePassed(task.date) ? 'red-text' : ''}`}>
-        <span className={checkedTasks[index] ? 'strikethrough' : ''}>
-          {task.name}
-          <br />
-          截止时间：{task.date}
-        </span>
-        <span className="delete-checkbox">
-          <Checkbox checked={checkedTasks[index]} onChange={() => handleCheckboxChange(index)}></Checkbox>
-        </span>
-        <span className="deleteOutlined" style={{ margin: '0 50px' }}>
-          <DeleteOutlined onClick={() => handleDeleteTask(index)} />
-        </span>
-      </p>
-    );
-  };
-
   return (
     <div className="container">
       <div className="content">
         <h1 className="title">ToDo List</h1>
-        {!showState && <Alert message="时间和任务不能为空" type="error" />}
-        <Input className="task-input" placeholder="输入任务名称" value={taskName} onChange={handleTaskNameChange} />
-        <Space direction="vertical">
-          <DatePicker onChange={handleDateChange} placeholder="选择截止时间" key={keyValue} />
-        </Space>
-        <Button className="add-button" type="primary" onClick={handleAddButtonClick}>
-          添加
-        </Button>
-        {!emptyShow && <Empty className="empty-message" />}
-        {tasks.map((task, index) => renderTaskItem(task, index))}
+        <TaskInput
+          taskName={taskName}
+          selectedDate={selectedDate}
+          showState={showState}
+          handleTaskNameChange={handleTaskNameChange}
+          handleDateChange={handleDateChange}
+          handleAddButtonClick={handleAddButtonClick}
+          keyValue={keyValue}
+        />
+        <TaskList
+          tasks={tasks}
+          checkedTasks={checkedTasks}
+          isTaskDatePassed={isTaskDatePassed}
+          handleCheckboxChange={handleCheckboxChange}
+          handleDeleteTask={handleDeleteTask}
+          emptyShow={emptyShow}
+        />
       </div>
     </div>
   );
