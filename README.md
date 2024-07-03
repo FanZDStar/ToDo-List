@@ -52,6 +52,8 @@ pnpm install -g json-server
 json-server --watch list.json
 ```
 
+注意：在list.json的目录下启动。别搞错了。
+
 list.json默认启动于localhost:3000,您无需担心会与REACT项目冲突，因为react已经修改为在4000端口中启动，详见./package.json中的第17行 `"start": "set PORT=4000 && react-scripts start",` 你也可以修改为其他端口，只需修改数字即可
 
 #### 3.项目成功运行后的描述
