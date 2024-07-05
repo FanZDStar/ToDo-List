@@ -4,7 +4,7 @@
 
 #### 1.安装axios
 
-可以选择全局安装
+可以选择全局安装(推荐)
 
 ```bash
 pnpm install axios -g
