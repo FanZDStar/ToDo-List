@@ -12,7 +12,7 @@ pnpm install axios -g
 
 也可以选择在项目的根目录下安装
 
-此React项目中使用到了axios请求
+此React项目中使用到了axios请求,为了储存数据。
 
 #### 2.安装json-server
 
