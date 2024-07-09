@@ -1,7 +1,7 @@
-// myapp/components/TaskItem.jsx
 import React from 'react';
 import { Checkbox } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
+import moment from 'moment';
 
 const TaskItem = ({
     task,
@@ -16,7 +16,7 @@ const TaskItem = ({
             <span className={checked ? 'strikethrough' : ''}>
                 {task.name}
                 <br />
-                截止时间：{task.date}
+                截止时间：{moment(task.date).format('YYYY-MM-DD')}
             </span>
             <span className="delete-checkbox">
                 <Checkbox checked={checked} onChange={() => handleCheckboxChange(index)}></Checkbox>

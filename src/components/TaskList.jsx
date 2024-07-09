@@ -1,4 +1,3 @@
-// myapp/components/TaskList.jsx
 import React from 'react';
 import { Empty } from 'antd';
 import TaskItem from './TaskItem';

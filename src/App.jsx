@@ -3,8 +3,7 @@ import axios from 'axios';
 import './App.css'; // 调整导入路径
 import TaskInput from './components/TaskInput';
 import TaskList from './components/TaskList';
-
-
+import moment from 'moment';
 
 const App = () => {
   const [taskName, setTaskName] = useState('');
@@ -21,9 +20,13 @@ const App = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/list');
-      setTasks(response.data);
-      setEmptyShow(!(response.data.length === 0));
+      const response = await axios.get('http://localhost:5000/list');
+      const formattedTasks = response.data.map(task => ({
+        ...task,
+        date: moment(task.date).format('YYYY-MM-DD')
+      }));
+      setTasks(formattedTasks);
+      setEmptyShow(!(formattedTasks.length === 0));
     } catch (error) {
       console.error('Error fetching tasks:', error);
     }
@@ -54,7 +57,7 @@ const App = () => {
 
     try {
       const newTask = { name: taskName, date: selectedDate };
-      const response = await axios.post('http://localhost:3000/list', newTask);
+      const response = await axios.post('http://localhost:5000/list', newTask);
       const updatedTasks = [...tasks, response.data];
       setTasks(updatedTasks);
       setCheckedTasks([...checkedTasks, false]);
@@ -77,7 +80,7 @@ const App = () => {
     const taskToDelete = tasks[index];
 
     try {
-      await axios.delete(`http://localhost:3000/list/${taskToDelete.id}`);
+      await axios.delete(`http://localhost:5000/list/${taskToDelete.id}`);
       const updatedTasks = tasks.filter((_, i) => i !== index);
       setTasks(updatedTasks);
       setCheckedTasks(checkedTasks.filter((_, i) => i !== index));
