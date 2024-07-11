@@ -1,42 +1,31 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import './App.css'; // 调整导入路径
-import TaskInput from './components/TaskInput';
-import TaskList from './components/TaskList';
-import moment from 'moment';
+// src/App.js
+
+import React, { useState, useEffect } from "react";
+import "./App.css";
+import TaskInput from "./components/TaskInput";
+import TaskList from "./components/TaskList";
+import { fetchData, addTask, deleteTask, isTaskDatePassed } from "./components/api";
 
 const App = () => {
-  const [taskName, setTaskName] = useState('');
+  const [taskName, setTaskName] = useState("");
   const [selectedDate, setSelectedDate] = useState(null);
   const [tasks, setTasks] = useState([]);
   const [checkedTasks, setCheckedTasks] = useState([]);
   const [showState, setShowState] = useState(true);
-  const [keyValue, setKeyValue] = useState('');
+  const [keyValue, setKeyValue] = useState("");
   const [emptyShow, setEmptyShow] = useState(false);
 
   useEffect(() => {
-    fetchData();
+    (async () => {
+      try {
+        const fetchedTasks = await fetchData();
+        setTasks(fetchedTasks);
+        setEmptyShow(!(fetchedTasks.length === 0));
+      } catch (error) {
+        console.error("Error fetching tasks:", error);
+      }
+    })();
   }, []);
-
-  const fetchData = async () => {
-    try {
-      const response = await axios.get('http://localhost:5000/list');
-      const formattedTasks = response.data.map(task => ({
-        ...task,
-        date: moment(task.date).format('YYYY-MM-DD')
-      }));
-      setTasks(formattedTasks);
-      setEmptyShow(!(formattedTasks.length === 0));
-    } catch (error) {
-      console.error('Error fetching tasks:', error);
-    }
-  };
-
-  const isTaskDatePassed = (dateString) => {
-    const selectedDate = new Date(dateString);
-    const currentDate = new Date();
-    return selectedDate < currentDate;
-  };
 
   const handleTaskNameChange = (e) => {
     setTaskName(e.target.value);
@@ -47,7 +36,7 @@ const App = () => {
   };
 
   const handleAddButtonClick = async () => {
-    if (taskName.trim() === '' || selectedDate === null) {
+    if (taskName.trim() === "" || selectedDate === null) {
       setShowState(false);
       setTimeout(() => {
         setShowState(true);
@@ -56,17 +45,16 @@ const App = () => {
     }
 
     try {
-      const newTask = { name: taskName, date: selectedDate };
-      const response = await axios.post('http://localhost:5000/list', newTask);
-      const updatedTasks = [...tasks, response.data];
+      const newTask = await addTask(taskName, selectedDate);
+      const updatedTasks = [...tasks, newTask];
       setTasks(updatedTasks);
       setCheckedTasks([...checkedTasks, false]);
-      setTaskName('');
+      setTaskName("");
       setSelectedDate(null);
       setKeyValue(new Date());
       setEmptyShow(true);
     } catch (error) {
-      console.error('Error adding task:', error);
+      console.error("Error adding task:", error);
     }
   };
 
@@ -80,13 +68,13 @@ const App = () => {
     const taskToDelete = tasks[index];
 
     try {
-      await axios.delete(`http://localhost:5000/list/${taskToDelete.id}`);
+      await deleteTask(taskToDelete.id);
       const updatedTasks = tasks.filter((_, i) => i !== index);
       setTasks(updatedTasks);
       setCheckedTasks(checkedTasks.filter((_, i) => i !== index));
       setEmptyShow(!(updatedTasks.length === 0));
     } catch (error) {
-      console.error('Error deleting task:', error);
+      console.error("Error deleting task:", error);
     }
   };
 
