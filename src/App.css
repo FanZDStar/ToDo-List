@@ -85,3 +85,20 @@
   font-size: 18px;
   color: #999;
 }
+
+
+
+/*退出按钮的样式*/
+.logout-button {
+  margin: 20px 0;
+  padding: 10px 20px;
+  background-color: #f44336;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.logout-button:hover {
+  background-color: #d32f2f;
+}

@@ -5,6 +5,8 @@ import "./App.css";
 import TaskInput from "./components/TaskInput";
 import TaskList from "./components/TaskList";
 import { fetchData, addTask, deleteTask, isTaskDatePassed } from "./components/api";
+import Login from "./components/login";
+import Register from "./components/register";
 
 const App = () => {
   const [taskName, setTaskName] = useState("");
@@ -14,15 +16,25 @@ const App = () => {
   const [showState, setShowState] = useState(true);
   const [keyValue, setKeyValue] = useState("");
   const [emptyShow, setEmptyShow] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [showLogin, setShowLogin] = useState(true); // 控制显示登录或注册
 
   useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setIsAuthenticated(false);
+      return;
+    }
+
     (async () => {
       try {
         const fetchedTasks = await fetchData();
         setTasks(fetchedTasks);
         setEmptyShow(!(fetchedTasks.length === 0));
+        setIsAuthenticated(true);
       } catch (error) {
         console.error("Error fetching tasks:", error);
+        setIsAuthenticated(false);
       }
     })();
   }, []);
@@ -78,10 +90,28 @@ const App = () => {
     }
   };
 
+
+
+  // 退出登录按钮
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    setIsAuthenticated(false);
+  };
+
+
+  if (!isAuthenticated) {
+    return showLogin ? (
+      <Login setIsAuthenticated={setIsAuthenticated} setShowLogin={setShowLogin} />
+    ) : (
+      <Register setIsAuthenticated={setIsAuthenticated} setShowLogin={setShowLogin} />
+    );
+  }
+
   return (
     <div className="container">
       <div className="content">
         <h1 className="title">ToDo List</h1>
+        
         <TaskInput
           taskName={taskName}
           selectedDate={selectedDate}
@@ -100,6 +130,7 @@ const App = () => {
           emptyShow={emptyShow}
         />
       </div>
+      <button className='logout-button' onClick={handleLogout}>退出登录</button>
     </div>
   );
 };
