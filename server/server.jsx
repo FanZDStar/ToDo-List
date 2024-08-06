@@ -1,8 +1,7 @@
-// server.jsx
 const express = require('express');
 const mysql = require('mysql');
 const cors = require('cors');
-const bcrypt = require('bcryptjs'); 
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const expressJoi = require('@escook/express-joi');
 
@@ -35,7 +34,24 @@ app.post('/register', expressJoi(reg_login_schema), async (req, res) => {
             res.status(500).json({ error: '注册失败' });
             return;
         }
-        res.status(201).json({ message: '注册成功' });
+
+        // 注册成功后创建用户专属表格
+        const tableName = `${username}_table`;
+        const createTableQuery = `
+            CREATE TABLE ?? (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                name VARCHAR(255),
+                date DATE
+            )
+        `;
+        pool.query(createTableQuery, [tableName], (err) => {
+            if (err) {
+                console.error('创建用户专属表格失败:', err);
+                res.status(500).json({ error: '创建用户专属表格失败' });
+                return;
+            }
+            res.status(201).json({ message: '注册成功并创建用户专属表格' });
+        });
     });
 });
 
@@ -55,7 +71,7 @@ app.post('/login', expressJoi(reg_login_schema), (req, res) => {
             return;
         }
 
-        const token = jwt.sign({ userId: results[0].id }, SECRET_KEY, { expiresIn: '1h' });
+        const token = jwt.sign({ userId: results[0].id, username: results[0].username }, SECRET_KEY, { expiresIn: '1h' });
         res.json({ token });
     });
 });
@@ -67,8 +83,9 @@ app.use((req, res, next) => {
         return res.status(401).json({ error: '未授权' });
     }
     try {
-        const decoded = jwt.verify(token.split(' ')[1], SECRET_KEY); // 修正这里
+        const decoded = jwt.verify(token.split(' ')[1], SECRET_KEY); 
         req.userId = decoded.userId;
+        req.username = decoded.username; // 存储用户名
         next();
     } catch (err) {
         return res.status(401).json({ error: '无效的令牌' });
@@ -77,7 +94,9 @@ app.use((req, res, next) => {
 
 // 获取任务列表
 app.get('/list', (req, res) => {
-    pool.query('SELECT * FROM tasks_test ', (err, results) => {
+    const tableName = `${req.username}_table`;
+
+    pool.query(`SELECT * FROM ??`, [tableName], (err, results) => {
         if (err) {
             console.error('获取任务列表失败:', err);
             res.status(500).json({ error: '获取任务列表失败' });
@@ -91,8 +110,9 @@ app.get('/list', (req, res) => {
 app.post('/list', (req, res) => {
     const { name, date } = req.body;
     const newTask = { name, date };
+    const tableName = `${req.username}_table`;
 
-    pool.query('INSERT INTO tasks_test SET ?', newTask, (err, result) => {
+    pool.query('INSERT INTO ?? SET ?', [tableName, newTask], (err, result) => {
         if (err) {
             console.error('添加任务失败:', err);
             res.status(500).json({ error: '添加任务失败' });
@@ -103,12 +123,12 @@ app.post('/list', (req, res) => {
     });
 });
 
-
 // 删除任务
 app.delete('/list/:id', (req, res) => {
     const taskId = req.params.id;
+    const tableName = `${req.username}_table`;
 
-    pool.query('DELETE FROM tasks_test WHERE id = ? ', [taskId], (err, result) => {
+    pool.query('DELETE FROM ?? WHERE id = ?', [tableName, taskId], (err, result) => {
         if (err) {
             console.error('删除任务失败:', err);
             res.status(500).json({ error: '删除任务失败' });

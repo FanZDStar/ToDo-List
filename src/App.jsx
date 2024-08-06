@@ -1,11 +1,15 @@
-
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import "./App.css";
-import TaskInput from "./components/TaskInput";
-import TaskList from "./components/TaskList";
 import { fetchData, addTask, deleteTask, isTaskDatePassed } from "./components/api";
 import Login from "./components/login";
 import Register from "./components/register";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+
+// 懒加载组件
+const TaskInput = React.lazy(() => import("./components/TaskInput"));
+// const TaskItem = React.lazy(() => import("./components/TaskItem"));
+const TaskList = React.lazy(() => import("./components/TaskList"));
+// const UsersList = React.lazy(() => import("./components/UserList"));
 
 const App = () => {
   const [taskName, setTaskName] = useState("");
@@ -89,14 +93,11 @@ const App = () => {
     }
   };
 
-
-
   // 退出登录按钮
   const handleLogout = () => {
     localStorage.removeItem('token');
     setIsAuthenticated(false);
   };
-
 
   if (!isAuthenticated) {
     return showLogin ? (
@@ -107,30 +108,33 @@ const App = () => {
   }
 
   return (
-    <div className="container">
-      <div className="content">
-        <h1 className="title">ToDo List</h1>
-        
-        <TaskInput
-          taskName={taskName}
-          selectedDate={selectedDate}
-          showState={showState}
-          handleTaskNameChange={handleTaskNameChange}
-          handleDateChange={handleDateChange}
-          handleAddButtonClick={handleAddButtonClick}
-          keyValue={keyValue}
-        />
-        <TaskList
-          tasks={tasks}
-          checkedTasks={checkedTasks}
-          isTaskDatePassed={isTaskDatePassed}
-          handleCheckboxChange={handleCheckboxChange}
-          handleDeleteTask={handleDeleteTask}
-          emptyShow={emptyShow}
-        />
-      </div>
-      <button className='logout-button' onClick={handleLogout}>退出登录</button>
-    </div>
+    <Router>
+      <Suspense fallback={<div>Loading...</div>}>
+        <div className="container">
+          <div className="content">
+            <h1 className="title">ToDo List</h1>
+            <TaskInput
+              taskName={taskName}
+              selectedDate={selectedDate}
+              showState={showState}
+              handleTaskNameChange={handleTaskNameChange}
+              handleDateChange={handleDateChange}
+              handleAddButtonClick={handleAddButtonClick}
+              keyValue={keyValue}
+            />
+            <TaskList
+              tasks={tasks}
+              checkedTasks={checkedTasks}
+              isTaskDatePassed={isTaskDatePassed}
+              handleCheckboxChange={handleCheckboxChange}
+              handleDeleteTask={handleDeleteTask}
+              emptyShow={emptyShow}
+            />
+          </div>
+          <button className='logout-button' onClick={handleLogout}>退出登录</button>
+        </div>
+      </Suspense>
+    </Router>
   );
 };
 
