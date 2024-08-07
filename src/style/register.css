@@ -1,5 +1,5 @@
-/* src/components/Login.css */
-.login-container {
+/* src/components/Register.css */
+.register-container {
     max-width: 400px;
     margin: 0 auto;
     padding: 2rem;
@@ -8,20 +8,20 @@
     border-radius: 8px;
 }
 
-.login-container h2 {
+.register-container h2 {
     text-align: center;
     margin-bottom: 2rem;
 }
 
-.login-container .ant-form-item {
+.register-container .ant-form-item {
     margin-bottom: 1.5rem;
 }
 
-.login-container .ant-input-affix-wrapper {
+.register-container .ant-input-affix-wrapper {
     border-radius: 4px;
 }
 
-.login-container .ant-btn-primary {
+.register-container .ant-btn-primary {
     width: 100%;
     border-radius: 4px;
 }

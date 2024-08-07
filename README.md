@@ -2,62 +2,116 @@
 
 ### ToDoList一些必要的说明
 
-#### 1.安装axios
+#### 1.项目结构介绍
 
-可以选择全局安装(推荐)
+[项目结构(按住Ctrl访问)](./imgs/截图02.jpg)
 
-```bash
-pnpm install axios -g
-```
+./dist：打包后的文件，后面再介绍
 
-也可以选择在项目的根目录下安装
+./server：后端代码(node.js+Express框架)
 
-此React项目中使用到了axios请求,为了储存数据。
+./src：前端代码，./components是组件文件夹，./style是样式文件夹
 
-#### 2.安装json-server
+./node_modules：必要的模块
 
-全局安装json-server
+#### 2.配置相应的包(node_modules)
 
-```
-pnpm install -g json-server
-```
-
-在此项目的react目录下已经建好了list.json      `./public/list/json`      这是本项目保存用户操作后留下的数据的json文件，目前如下：
+下载完成后，打开package.json查看配置。
 
 ```json
+// package.json
 {
-  "list": [
-    {
-      "id": "a615",
-      "name": "打余姝玥",
-      "date": "2024-06-01"
-    },
-    {
-      "id": "e2cf",
-      "name": "和余鸿恺贴贴",
-      "date": "2024-06-01"
-    },
-    {
-      "id": "5644",
-      "name": "生日",
-      "date": "2024-06-01"
-    }
-  ]
+  "name": "my-app",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@ant-design/icons": "^5.4.0",
+    "@escook/express-joi": "^1.1.1",
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "antd": "^5.20.0",
+    "axios": "^1.7.3",
+    "bcryptjs": "2.4.3",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "joi": "^17.13.3",
+    "jsonwebtoken": "8.5.1",
+    "moment": "^2.30.1",
+    "mysql": "^2.18.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.26.0",
+    "react-scripts": "5.0.1",
+    "web-vitals": "^2.1.4"
+  },
+  "scripts": {
+    "start": "set PORT=4000 && react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "fro-build": "webpack",
+    "back-start": "nodemon server/server.jsx",
+    "start:prod": "pnpm run build:frontend && pnpm run start:backend"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "clean-webpack-plugin": "^4.0.0",
+    "css-loader": "^7.1.2",
+    "css-minimizer-webpack-plugin": "^7.0.0",
+    "esbuild": "^0.23.0",
+    "esbuild-loader": "^4.2.2",
+    "html-webpack-plugin": "^5.6.0",
+    "image-minimizer-webpack-plugin": "^4.1.0",
+    "less": "^4.2.0",
+    "less-loader": "^12.2.0",
+    "style-loader": "^4.0.0",
+    "webpack": "^5.93.0",
+    "webpack-bundle-analyzer": "^4.10.2",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^5.0.4"
+  }
 }
+
 ```
 
-在启动ToDoList之前，请您首先使用如下代码来启动json-server
+进入项目根目录，打开终端，输入`npm install` 或者`pnpm install `，会按照packjson安装你的dependencies，如下图
 
-```bash
-json-server --watch list.json
-```
+![截图01](imgs/截图01.jpg)
 
-注意：在list.json的目录下启动。别搞错了。
+然后直接启动`npm start` 或者`pnpm start`，这个项目会启动于4000端口，您也可以修改至其他端口，修改packjson中第27行即可`start": "set PORT=4000 && react-scripts start`,修改数字为你想要的端口数即可，例如4001或者4002(但是不要是5000)。
 
-list.json默认启动于localhost:3000,您无需担心会与REACT项目冲突，因为react已经修改为在4000端口中启动，详见./package.json中的第17行 `"start": "set PORT=4000 && react-scripts start",` 你也可以修改为其他端口，只需修改数字即可
+Ctrl+C键先关闭react项目的运行（没错你没看错，就是粘贴的那个）
 
-#### 3.项目成功运行后的描述
+#### 3.启动项目
 
-`pnpm start`
+1.先启动后端服务器`pnpm run back-start ` ，终止是键盘ctrl+c
 
- 由于使用了json-server模拟后端，所以应该会出现有三条数据的渲染，用户再使用删除或者添加后数据会同步保存到list.json里，刷新list.json即可看到。我使用了这种方式来部分完成了选做的第一个。必做部分和作业要求中实现的一样。
+![截图03](imgs/截图03.jpg)
+
+证明你已经成功启动，这就是为什么我建议你不要在5000中启动前端react代码，会造成端口冲突。
+
+2.启动前端代码`pnpm start `，终止是键盘ctrl+c
+
+[^启动前端代码`pnpm start `，终止是键盘ctrl+c]:注意：先新建一个终端，也是进入根目录，再输入命令
+
+
+
+![截图04](imgs/截图04.jpg)
+
+证明你已经成功启动前端代码，你应该能看到如下登录界面：
+
+![截图05](imgs/截图05.jpg)
+
+#### 5.

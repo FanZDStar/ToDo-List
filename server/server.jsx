@@ -26,31 +26,46 @@ const pool = mysql.createPool({
 // 注册用户
 app.post('/register', expressJoi(reg_login_schema), async (req, res) => {
     const { username, password } = req.body;
-    const hashedPassword = await bcrypt.hash(password, 10);
 
-    pool.query('INSERT INTO users (username, password) VALUES (?, ?)', [username, hashedPassword], (err, result) => {
+    // 检查用户名是否已注册
+    pool.query('SELECT * FROM users WHERE username = ?', [username], async (err, results) => {
         if (err) {
-            console.error('注册失败:', err);
-            res.status(500).json({ error: '注册失败' });
+            console.error('查询用户名失败:', err);
+            res.status(500).json({ error: '查询用户名失败' });
             return;
         }
 
-        // 注册成功后创建用户专属表格
-        const tableName = `${username}_table`;
-        const createTableQuery = `
-            CREATE TABLE ?? (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                name VARCHAR(255),
-                date DATE
-            )
-        `;
-        pool.query(createTableQuery, [tableName], (err) => {
+        if (results.length > 0) {
+            res.status(409).json({ error: '用户名已存在' });
+            return;
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        pool.query('INSERT INTO users (username, password) VALUES (?, ?)', [username, hashedPassword], (err, result) => {
             if (err) {
-                console.error('创建用户专属表格失败:', err);
-                res.status(500).json({ error: '创建用户专属表格失败' });
+                console.error('注册失败:', err);
+                res.status(500).json({ error: '注册失败' });
                 return;
             }
-            res.status(201).json({ message: '注册成功并创建用户专属表格' });
+
+            // 注册成功后创建用户专属表格
+            const tableName = `${username}_table`;
+            const createTableQuery = `
+                CREATE TABLE ?? (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    name VARCHAR(255),
+                    date DATE
+                )
+            `;
+            pool.query(createTableQuery, [tableName], (err) => {
+                if (err) {
+                    console.error('创建用户专属表格失败:', err);
+                    res.status(500).json({ error: '创建用户专属表格失败' });
+                    return;
+                }
+                res.status(201).json({ message: '注册成功并创建用户专属表格' });
+            });
         });
     });
 });
