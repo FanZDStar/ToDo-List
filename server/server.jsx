@@ -19,8 +19,8 @@ const pool = mysql.createPool({
     connectionLimit: 10, // 连接池中最大连接数
     host: 'localhost',
     user: 'root',
-    password: 'xxxxxx',
-    database: 'xxxxxx'
+    password: '123456',
+    database: 'itcast'
 });
 
 // 注册用户
