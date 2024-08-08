@@ -114,4 +114,34 @@ Ctrl+C键先关闭react项目的运行（没错你没看错，就是粘贴的那
 
 ![截图05](imgs/截图05.jpg)
 
-#### 5.
+#### 4.建立你的对应数据库
+
+在文件
+
+`./server/server.jsx` 中如下代码：
+
+```jsx
+const pool = mysql.createPool({
+    connectionLimit: 10, // 连接池中最大连接数
+    host: 'localhost',
+    user: 'root',
+    password: 'xxxxxx',
+    database: 'xxxxxx'
+});
+```
+
+修改成您自己的数据库，数据库下新建users的表，sql语句如下:
+
+`create table users
+(
+    id       int auto_increment
+        primary key,
+    username varchar(255) not null,
+    password varchar(255) not null
+);`
+
+新建好了，就可以启动前端和后端服务器，然后就可以开始你的操作啦！
+
+#### 5.webpack打包
+
+根目录下终端输入命令`pnpm run fro-build`即可，打包完成后出现一个dist文件夹，打开index.html即可。
