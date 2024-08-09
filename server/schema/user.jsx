@@ -1,4 +1,5 @@
-// validationSchemas.js
+// 用于注册和登录验证的 Joi 验证规则
+
 const Joi = require('joi');
 
 // 用户名的验证规则
