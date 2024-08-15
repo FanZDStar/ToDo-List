@@ -1,10 +1,8 @@
-// src/components/Register.js
-
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Form, Input, Button, Typography, message } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
-import '../style/register.css'; // 导入自定义样式
+import '../style/register.css'; 
 
 const { Title } = Typography;
 const BASE_URL = "http://localhost:5000";
@@ -27,7 +25,6 @@ const Register = ({ setIsAuthenticated }) => {
       });
 
       if (response.status === 201) {
-        // Automatically log in the user after successful registration
         const loginResponse = await axios.post(`${BASE_URL}/login`, {
           username: values.username,
           password: values.password
@@ -39,7 +36,7 @@ const Register = ({ setIsAuthenticated }) => {
         }
       }
     } catch (error) {
-      message.error('giegie,用户名重复了捏');
+      message.error('用户名重复了捏');
       console.error('Registration error:', error);
     } finally {
       setLoading(false);
@@ -62,7 +59,12 @@ const Register = ({ setIsAuthenticated }) => {
         </Form.Item>
         <Form.Item
           name="password"
-          rules={[{ required: true, message: 'Please input your Password!' }]}
+          rules={[{ required: true, message: 'Please input your Password!' },
+            {
+              pattern: /^[\S]{6,12}$/,
+              message: 'Password must be 6 to 12 characters and cannot contain spaces!',
+            },
+          ]}
         >
           <Input.Password prefix={<LockOutlined />} placeholder="Password" />
         </Form.Item>
