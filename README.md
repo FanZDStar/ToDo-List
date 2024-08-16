@@ -1,25 +1,29 @@
 ## README
 
-### ToDoList一些必要的说明
+[TOC]
 
-#### 1.项目结构介绍
+### ToDoList项目概述
 
-[项目结构(按住Ctrl访问)](./imgs/截图02.jpg)
+#### 1.技术栈
 
-./dist：打包后的文件，后面再介绍
+**React**: 用于构建用户界面的 脚手架
 
-./server：后端代码(node.js+Express框架)
+**Axios**: 用于发送 HTTP 请求
 
-./src：前端代码，./components是组件文件夹，./style是样式文件夹
+**React Router**: 实现前端路由
 
-./node_modules：必要的模块
+**Ant Design**: 组件库
 
 #### 2.配置相应的包(node_modules)
 
-下载完成后，打开package.json查看配置。
+1.克隆仓库到本地
+
+`git clone https://github.com/FanZDStar/ToDo-List.git`
+
+2.打开package.json查看配置。
 
 ```json
-// package.json
+
 {
   "name": "my-app",
   "version": "0.1.0",
@@ -145,3 +149,16 @@ const pool = mysql.createPool({
 #### 5.webpack打包
 
 根目录下终端输入命令`pnpm run fro-build`即可，打包完成后出现一个dist文件夹，打开index.html即可。
+
+### 功能介绍
+
+- **用户认证**
+
+  - 支持用户注册和登录功能。
+  - 登录后用户可管理自己的待办任务。
+
+- **任务管理**
+  - **查看任务**: 登录后用户可以查看自己的所有任务。
+  - **添加任务**: 用户可以创建新的待办任务。
+  - **更新任务**: 用户可以修改任务的状态（如完成、未完成）。
+  - **删除任务**: 用户可以删除不需要的任务。
