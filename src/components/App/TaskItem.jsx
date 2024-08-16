@@ -21,7 +21,7 @@ const TaskItem = ({
             <span className="delete-checkbox">
                 <Checkbox
                     checked={checkedTasks[index]} // 使用 checkedTasks 来设置 checkbox 状态
-                    onChange={() => handleCheckboxChange(index)} 
+                    onChange={() => handleCheckboxChange(index)} // 只传递 index
                 />
             </span>
             <span className="deleteOutlined" style={{ margin: '0 50px' }}>

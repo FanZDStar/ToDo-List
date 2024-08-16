@@ -12,7 +12,7 @@ const TaskList = ({
 }) => {
     return (
         <div className="task-list">
-            {!emptyShow && <Empty className="empty-message" />}
+            {emptyShow && <Empty className="empty-message" />}
             {tasks.map((task, index) => (
                 <TaskItem
                     key={index}

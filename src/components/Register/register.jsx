@@ -2,13 +2,15 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Form, Input, Button, Typography, message } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
-import '../style/register.css';
+import { useNavigate } from 'react-router-dom'; 
+import './register.css';
 
 const { Title } = Typography;
 const BASE_URL = "http://localhost:5000";
 
-const Register = ({ setIsAuthenticated, setShowLogin }) => {
+const Register = ({ setShowLogin }) => {
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate(); 
 
   const handleRegister = async (values) => {
     if (values.password !== values.confirmPassword) {
@@ -25,19 +27,11 @@ const Register = ({ setIsAuthenticated, setShowLogin }) => {
       });
 
       if (response.status === 201) {
-        const loginResponse = await axios.post(`${BASE_URL}/login`, {
-          username: values.username,
-          password: values.password
-        });
-
-        if (loginResponse.data.token) {
-          localStorage.setItem('token', loginResponse.data.token);
-          setIsAuthenticated(false);
-          setShowLogin(true); // 返回登录页面
-        }
+        message.success('Registration successful! Please log in.');
+        navigate('/login'); 
       }
     } catch (error) {
-      message.error('用户名重复了捏');
+      message.error('Username already exists or registration failed.');
       console.error('Registration error:', error);
     } finally {
       setLoading(false);
@@ -60,7 +54,8 @@ const Register = ({ setIsAuthenticated, setShowLogin }) => {
         </Form.Item>
         <Form.Item
           name="password"
-          rules={[{ required: true, message: 'Please input your Password!' },
+          rules={[
+            { required: true, message: 'Please input your Password!' },
             {
               pattern: /^[\S]{6,12}$/,
               message: 'Password must be 6 to 12 characters and cannot contain spaces!',
@@ -86,3 +81,4 @@ const Register = ({ setIsAuthenticated, setShowLogin }) => {
 };
 
 export default Register;
+

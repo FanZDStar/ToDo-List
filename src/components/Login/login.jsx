@@ -1,17 +1,19 @@
+
 import React, { useState } from "react";
 import axios from "axios";
 import { Form, Input, Button, Typography, Alert } from "antd";
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
-import "../style/login.css";
-import { fetchData } from "./api"; // 引入 fetchData 方法
+import { useNavigate } from 'react-router-dom'; // 使用 useNavigate
+import "./login.css";
+import { fetchData } from "../api";
 
 const { Title } = Typography;
-
 const BASE_URL = "http://localhost:5000";
 
-const Login = ({ setIsAuthenticated, setShowLogin, setTasks, setEmptyShow }) => {
+const Login = ({ setIsAuthenticated, setTasks, setEmptyShow }) => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate(); // 使用 useNavigate
 
   const handleLogin = async (values) => {
     const { username, password } = values;
@@ -26,7 +28,10 @@ const Login = ({ setIsAuthenticated, setShowLogin, setTasks, setEmptyShow }) => 
         // 登录成功后立即获取任务数据
         const fetchedTasks = await fetchData();
         setTasks(fetchedTasks);
-        setEmptyShow(!(fetchedTasks.length === 0));
+        setEmptyShow(fetchedTasks.length === 0);
+        
+        // 登录成功后跳转到主页面
+        navigate('/'); 
       }
     } catch (error) {
       setError("Login failed");
@@ -66,7 +71,7 @@ const Login = ({ setIsAuthenticated, setShowLogin, setTasks, setEmptyShow }) => 
       </Form>
       <p>
         Don't have an account?{" "}
-        <Button type="link" onClick={() => setShowLogin(false)}>
+        <Button type="link" onClick={() => navigate('/register')}> {/* 使用 navigate */}
           Register
         </Button>
       </p>
@@ -75,3 +80,6 @@ const Login = ({ setIsAuthenticated, setShowLogin, setTasks, setEmptyShow }) => 
 };
 
 export default Login;
+
+
+
