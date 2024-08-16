@@ -1,11 +1,10 @@
 
-
 import axios from "axios";
 import moment from "moment";
 
 const BASE_URL = "http://localhost:5000";
 
-// 从本地存储获取JWT令牌
+
 const getToken = () => localStorage.getItem('token');
 
 // 获取任务列表
@@ -56,6 +55,22 @@ export const deleteTask = async (taskId) => {
         throw error;
     }
 };
+
+
+// 更新任务完成状态
+export const updateTaskCompletion = async (taskId, completed) => {
+    try {
+        await axios.patch(`${BASE_URL}/list/${taskId}`, { completed }, {
+            headers: {
+                Authorization: `Bearer ${getToken()}`,
+            },
+        });
+    } catch (error) {
+        console.error("Error updating task completion:", error);
+        throw error;
+    }
+};
+
 
 // 检查任务日期是否已过
 export const isTaskDatePassed = (dateString) => {

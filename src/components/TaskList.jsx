@@ -4,11 +4,11 @@ import TaskItem from './TaskItem';
 
 const TaskList = ({
     tasks,
-    checkedTasks,
     isTaskDatePassed,
     handleCheckboxChange,
     handleDeleteTask,
-    emptyShow
+    emptyShow,
+    checkedTasks
 }) => {
     return (
         <div className="task-list">
@@ -18,14 +18,15 @@ const TaskList = ({
                     key={index}
                     task={task}
                     index={index}
-                    checked={checkedTasks[index]}
                     isTaskDatePassed={isTaskDatePassed}
                     handleCheckboxChange={handleCheckboxChange}
                     handleDeleteTask={handleDeleteTask}
+                    checkedTasks={checkedTasks} 
                 />
             ))}
         </div>
     );
 };
+
 
 export default TaskList;

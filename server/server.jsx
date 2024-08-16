@@ -23,52 +23,52 @@ const pool = mysql.createPool({
 });
 
 // 注册用户接口
+// 注册用户接口
 app.post('/register', expressJoi(reg_login_schema), async (req, res) => {
-    const { username, password } = req.body; 
+    const { username, password } = req.body;
 
-    // 检查用户名是否已被注册过
     pool.query('SELECT * FROM users WHERE username = ?', [username], async (err, results) => {
         if (err) {
-            console.error('查询用户名失败:', err); 
-            res.status(500).json({ error: '查询用户名失败' }); 
-            return;
+            console.error('查询用户名失败:', err);
+            return res.status(500).json({ error: '查询用户名失败' });
         }
 
         if (results.length > 0) {
-            res.status(409).json({ error: '用户名已存在' }); 
-            return;
+            return res.status(409).json({ error: '用户名已存在' });
         }
 
-        const hashedPassword = await bcrypt.hash(password, 10); // 哈希加密
-
-        // 插入新用户数据到数据库
-        pool.query('INSERT INTO users (username, password) VALUES (?, ?)', [username, hashedPassword], (err, result) => {
-            if (err) {
-                console.error('注册失败:', err); 
-                res.status(500).json({ error: '注册失败' }); 
-                return;
-            }
-
-            // 注册成功后为新用户创建一个专属表格，使用${}
-            const tableName = `${username}_table`; 
-            const createTableQuery = `
-                CREATE TABLE ?? (
-                    id INT AUTO_INCREMENT PRIMARY KEY, 
-                    name VARCHAR(255), // 任务名称
-                    date DATE // 任务日期
-                )
-            `;
-            pool.query(createTableQuery, [tableName], (err) => {
+        try {
+            const hashedPassword = await bcrypt.hash(password, 10);
+            pool.query('INSERT INTO users (username, password) VALUES (?, ?)', [username, hashedPassword], (err, result) => {
                 if (err) {
-                    console.error('创建用户专属表格失败:', err); 
-                    res.status(500).json({ error: '创建用户专属表格失败' }); 
-                    return;
+                    console.error('注册失败:', err);
+                    return res.status(500).json({ error: '注册失败' });
                 }
-                res.status(201).json({ message: '注册成功并创建用户专属表格' }); 
+
+                const tableName = `${username}_table`;
+                const createTableQuery = `
+                    CREATE TABLE \`${tableName}\` (
+                        id INT AUTO_INCREMENT PRIMARY KEY,
+                        name VARCHAR(255),
+                        date DATE,
+                        completed BOOLEAN DEFAULT FALSE
+                    )
+                `;
+                pool.query(createTableQuery, (err) => {
+                    if (err) {
+                        console.error('创建用户专属表格失败:', err);
+                        return res.status(500).json({ error: '创建用户专属表格失败' });
+                    }
+                    res.status(201).json({ message: '注册成功并创建用户专属表格' });
+                });
             });
-        });
+        } catch (error) {
+            console.error('密码加密失败:', error);
+            res.status(500).json({ error: '密码加密失败' });
+        }
     });
 });
+
 
 // 用户登录接口
 app.post('/login', expressJoi(reg_login_schema), (req, res) => {
@@ -98,7 +98,7 @@ app.post('/login', expressJoi(reg_login_schema), (req, res) => {
 app.use((req, res, next) => {
     const token = req.headers['authorization']; 
     if (!token) {
-        return res.status(401).json({ error: '未授权' }); // 如果没有 token，返回401状态码
+        return res.status(401).json({ error: '未授权' }); // 如果没有 token，返回401
     }
     try {
         const decoded = jwt.verify(token.split(' ')[1], SECRET_KEY); // 解码
@@ -128,7 +128,7 @@ app.get('/list', (req, res) => {
 // 添加任务接口
 app.post('/list', (req, res) => {
     const { name, date } = req.body; 
-    const newTask = { name, date }; 
+    const newTask = { name, date, completed: false }; // 默认任务为未完成
     const tableName = `${req.username}_table`; 
 
     // 插入新任务到用户的专属表格中
@@ -140,6 +140,23 @@ app.post('/list', (req, res) => {
         }
         newTask.id = result.insertId; 
         res.status(201).json(newTask); 
+    });
+});
+
+// 更新任务完成状态接口
+app.patch('/list/:id', (req, res) => {
+    const taskId = req.params.id; // 从请求参数中获取任务ID
+    const { completed } = req.body; // 从请求体中获取完成状态
+    const tableName = `${req.username}_table`; // 获取当前用户的专属表格名称
+
+    // 更新指定ID的任务的完成状态
+    pool.query('UPDATE ?? SET completed = ? WHERE id = ?', [tableName, completed, taskId], (err, result) => {
+        if (err) {
+            console.error('更新任务状态失败:', err); 
+            res.status(500).json({ error: '更新任务状态失败' }); 
+            return;
+        }
+        res.status(200).json({ message: '任务状态更新成功' }); 
     });
 });
 

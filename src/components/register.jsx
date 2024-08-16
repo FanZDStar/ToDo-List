@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Form, Input, Button, Typography, message } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
-import '../style/register.css'; 
+import '../style/register.css';
 
 const { Title } = Typography;
 const BASE_URL = "http://localhost:5000";
 
-const Register = ({ setIsAuthenticated }) => {
+const Register = ({ setIsAuthenticated, setShowLogin }) => {
   const [loading, setLoading] = useState(false);
 
   const handleRegister = async (values) => {
@@ -32,7 +32,8 @@ const Register = ({ setIsAuthenticated }) => {
 
         if (loginResponse.data.token) {
           localStorage.setItem('token', loginResponse.data.token);
-          setIsAuthenticated(true);
+          setIsAuthenticated(false);
+          setShowLogin(true); // 返回登录页面
         }
       }
     } catch (error) {
