@@ -72,9 +72,12 @@ export const updateTaskCompletion = async (taskId, completed) => {
 };
 
 
-// 检查任务日期是否已过
+// 检查任务日期是否已过（包括今天）
 export const isTaskDatePassed = (dateString) => {
     const selectedDate = new Date(dateString);
     const currentDate = new Date();
+    // 将日期设为 00:00:00 来仅比较日期部分
+    selectedDate.setHours(0, 0, 0, 0);
+    currentDate.setHours(0, 0, 0, 0);
     return selectedDate < currentDate;
 };
