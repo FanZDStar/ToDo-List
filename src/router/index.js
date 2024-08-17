@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
-import App from '../components/App/App.jsx';
-import Login from '../components/Login/login.jsx';
-import Register from '../components/Register/register.jsx';
 
+// 使用 React.lazy() 实现懒加载
+const App = React.lazy(() => import('../components/App/App.jsx'));
+const Login = React.lazy(() => import('../components/Login/login.jsx'));
+const Register = React.lazy(() => import('../components/Register/register.jsx'));
 
-const ConditionalRoute = ({ condition, redirectTo, component }) => {
-  return condition ? component : <Navigate to={redirectTo} />;
+// 单独抽取的函数用于创建条件路由
+const createConditionalRoute = (condition, redirectTo, element) => {
+  return condition ? element : <Navigate to={redirectTo} />;
 };
 
 const RoutesComponent = () => {
@@ -14,8 +16,18 @@ const RoutesComponent = () => {
   const [tasks, setTasks] = useState([]);
   const [emptyShow, setEmptyShow] = useState(true);
 
+  // 监控 token 变化，更新 isAuthenticated 状态
   useEffect(() => {
-    setIsAuthenticated(!!localStorage.getItem('token'));
+    const handleStorageChange = () => {
+      setIsAuthenticated(!!localStorage.getItem('token'));
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+
+    // 清理事件监听器
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
   }, []);
 
   const handleLogout = () => {
@@ -26,38 +38,34 @@ const RoutesComponent = () => {
   const router = createBrowserRouter([
     {
       path: "/login",
-      element: (
-        <ConditionalRoute
-          condition={!isAuthenticated}
-          redirectTo="/"
-          component={<Login setIsAuthenticated={setIsAuthenticated} setTasks={setTasks} setEmptyShow={setEmptyShow} />}
-        />
+      element: createConditionalRoute(
+        !isAuthenticated,
+        "/",
+        <Login setIsAuthenticated={setIsAuthenticated} setTasks={setTasks} setEmptyShow={setEmptyShow} />
       ),
     },
     {
       path: "/register",
-      element: (
-        <ConditionalRoute
-          condition={!isAuthenticated}
-          redirectTo="/"
-          component={<Register setShowLogin={() => {}} />}
-        />
+      element: createConditionalRoute(
+        !isAuthenticated,
+        "/",
+        <Register setShowLogin={() => {}} />
       ),
     },
     {
       path: "/",
-      element: (
-        <ConditionalRoute
-          condition={isAuthenticated}
-          redirectTo="/login"
-          component={<App tasks={tasks} setTasks={setTasks} emptyShow={emptyShow} setEmptyShow={setEmptyShow} handleLogout={handleLogout} />}
-        />
+      element: createConditionalRoute(
+        isAuthenticated,
+        "/login",
+        <App tasks={tasks} setTasks={setTasks} emptyShow={emptyShow} setEmptyShow={setEmptyShow} handleLogout={handleLogout} />
       ),
     },
   ]);
 
   return (
-    <RouterProvider router={router} />
+    <Suspense fallback={<div>Loading...</div>}>
+      <RouterProvider router={router} />
+    </Suspense>
   );
 };
 
