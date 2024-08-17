@@ -1,10 +1,12 @@
-## README
-
 [TOC]
 
-### ToDoList项目概述
 
-#### 1.技术栈
+
+# README
+
+## ToDoList项目概述
+
+### 1.技术栈
 
 **React**: 用于构建用户界面的 脚手架
 
@@ -14,7 +16,7 @@
 
 **Ant Design**: 组件库
 
-#### 2.配置相应的包(node_modules)
+### 2.配置相应的包(node_modules)
 
 1.克隆仓库到本地
 
@@ -98,7 +100,7 @@
 
 Ctrl+C键先关闭react项目的运行（没错你没看错，就是复制的那个）
 
-#### 3.启动项目
+### 3.启动项目
 
 1.先启动后端服务器`pnpm run back-start ` ，终止是键盘ctrl+c
 
@@ -118,7 +120,7 @@ Ctrl+C键先关闭react项目的运行（没错你没看错，就是复制的那
 
 ![截图05](imgs/截图05.jpg)
 
-#### 4.建立你的对应数据库
+### 4.建立你的对应数据库
 
 在文件
 
@@ -146,11 +148,11 @@ const pool = mysql.createPool({
 
 新建好了，就可以启动前端和后端服务器，然后就可以开始你的操作啦！
 
-#### 5.webpack打包
+### 5.打包
 
-根目录下终端输入命令`pnpm run fro-build`即可，打包完成后出现一个dist文件夹，打开index.html即可。
+根目录下终端输入命令`pnpm run build`即可，打包完成后出现一个build文件夹，进入build输入`live-server`即可。
 
-### 功能介绍
+## 功能介绍
 
 - **用户认证**
 
