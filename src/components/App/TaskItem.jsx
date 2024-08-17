@@ -12,7 +12,10 @@ const TaskItem = ({
     checkedTasks
 }) => {
     return (
-        <p key={index} className={`task-info task-item ${isTaskDatePassed(task.date) ? 'red-text' : ''}`}>
+        <p
+            key={index}
+            className={`task-info task-item ${isTaskDatePassed(task.date) ? 'red-text' : ''}`}
+        >
             <span className={checkedTasks[index] ? 'strikethrough' : ''}>
                 {task.name}
                 <br />
@@ -24,12 +27,11 @@ const TaskItem = ({
                     onChange={() => handleCheckboxChange(index)} // 只传递 index
                 />
             </span>
-            <span className="deleteOutlined" style={{ margin: '0 50px' }}>
+            <span className="deleteOutlined">
                 <DeleteOutlined onClick={() => handleDeleteTask(index)} />
             </span>
         </p>
     );
 };
-
 
 export default TaskItem;

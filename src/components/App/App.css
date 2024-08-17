@@ -49,10 +49,6 @@ body {
   background-color: #f1f1f1;
 }
 
-.delete-checkbox {
-  margin-left: 20px;
-}
-
 /* 任务文字样式 */
 .strikethrough {
   text-decoration: line-through;
@@ -61,6 +57,16 @@ body {
 
 .red-text {
   color: red;
+}
+
+/* 保持复选框和删除图标的默认颜色 */
+.delete-checkbox {
+  margin-left: 20px;
+}
+
+.deleteOutlined {
+  margin: 0 50px;
+  color: black; /* 确保图标颜色为黑色 */
 }
 
 /* 空任务提示样式 */
