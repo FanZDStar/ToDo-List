@@ -1,3 +1,13 @@
+<!--
+ * @Author: ourEDA MaMing
+ * @Date: 2024-05-20 15:17:49
+ * @LastEditors: ourEDA MaMing
+ * @LastEditTime: 2024-11-26 19:48:47
+ * @FilePath: \midTermHomeWork\README.md
+ * @Description: 李猴啊
+ * 
+ * Copyright (c) 2024 by FanZDStar , All Rights Reserved. 
+-->
 - # ToDoList 项目
   
   ## 目录
@@ -87,4 +97,4 @@
   
   ## 许可协议
   
-  本项目采用 MIT 许可协议。
+  本项目采用[LICENSE](./LICENSE)许可协议。
